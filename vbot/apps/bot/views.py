@@ -67,5 +67,5 @@ def verify_signature_view():
 
 
 viberbot.add_url_rule('/', view_func=incoming_view, methods=['POST'])
-viberbot.add_url_rule('/set_webhook', view_func=set_webhook_view, methods=['GET'])
+viberbot.add_url_rule('/set_webhook', view_func=set_webhook_view, methods=['POST'])
 viberbot.add_url_rule('/verify_signature', view_func=verify_signature_view, methods=['POST'])
