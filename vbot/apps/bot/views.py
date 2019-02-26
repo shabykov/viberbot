@@ -20,7 +20,8 @@ viberbot_api = Api(BotConfiguration(
 
 
 def incoming_view():
-    logging.info("received request. post data: {0}".format(flask.request.get_data()))
+    logging.info("Event: {0}".format(flask.request.get_data()))
+    logging.info("Signature: {0}".format(flask.request.headers.get('X-Viber-Content-Signature')))
 
     if not viberbot_api.verify_signature(flask.request.get_data(),
                                          flask.request.headers.get('X-Viber-Content-Signature')):
