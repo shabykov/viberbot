@@ -1,14 +1,14 @@
 from flask import Flask, request, Response
-from viberbot import Api
-from viberbot.api.bot_configuration import BotConfiguration
-from viberbot.api.messages.text_message import TextMessage
+from vbot import Api
+from vbot.api.bot_configuration import BotConfiguration
+from vbot.api.messages.text_message import TextMessage
 import logging
 
-from viberbot.api.viber_requests import ViberConversationStartedRequest
-from viberbot.api.viber_requests import ViberFailedRequest
-from viberbot.api.viber_requests import ViberMessageRequest
-from viberbot.api.viber_requests import ViberSubscribedRequest
-from viberbot.api.viber_requests import ViberUnsubscribedRequest
+from vbot.api.viber_requests import ViberConversationStartedRequest
+from vbot.api.viber_requests import ViberFailedRequest
+from vbot.api.viber_requests import ViberMessageRequest
+from vbot.api.viber_requests import ViberSubscribedRequest
+from vbot.api.viber_requests import ViberUnsubscribedRequest
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)

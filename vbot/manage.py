@@ -2,8 +2,8 @@ import logging
 import os
 from optparse import OptionParser
 
-from .apps import init_app
-from .config.urils import get_module
+from vbot.apps import init_app
+from vbot.config.urils import get_module
 
 
 def main():
@@ -17,6 +17,7 @@ def main():
                         level=logging.INFO)
 
     app = init_app(settings)
+    app.run(host=settings.HOST, port=settings.PORT, debug=settings.DEBUG, ssl_context=settings.SSL_CONTEXT)
 
 
 if __name__ == "__main__":

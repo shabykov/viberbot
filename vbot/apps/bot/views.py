@@ -3,13 +3,13 @@ import flask
 
 from viberbot.api.messages.text_message import TextMessage
 from viberbot.api.viber_requests import (ViberFailedRequest,
-                                         ViberMessageRequest,
-                                         ViberSubscribedRequest)
+                                     ViberMessageRequest,
+                                     ViberSubscribedRequest)
 
 from .middlewares import viber_api
 
 
-viberbot = flask.Blueprint('viberbot', __name__)
+viberbot = flask.Blueprint('vbot', __name__)
 
 
 def web_hook(bot_api):
