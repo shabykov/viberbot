@@ -44,7 +44,12 @@ def incoming_view():
 
 
 def set_webhook_view():
-    data = json.loads(flask.request.get_data().decode('utf-8'))
+    try:
+        data = json.loads(flask.request.get_data().decode('utf-8'))
+    except Exception as error:
+        logging.error('input data parse error {}'.format(error))
+        data = {}
+
     webhook = data.get('webhook')
     try:
         if webhook is not None:
@@ -68,6 +73,40 @@ def verify_signature_view():
         'message': flask.request.get_data().decode('utf-8')})
 
 
+def replace_auth_token_view():
+    try:
+        data = json.loads(flask.request.get_data().decode('utf-8'))
+    except Exception as error:
+        logging.error('input data parse error {}'.format(error))
+        data = {}
+
+    name = data.get('name')
+    avatar = data.get('avatar')
+    auth_token = data.get('token')
+    webhook = data.get('webhook')
+
+    if auth_token is not None and name is not None and avatar is not None:
+        try:
+
+            viberbot_api = Api(BotConfiguration(name=name, avatar=avatar, auth_token=auth_token))
+            viberbot_api.set_webhook(url=webhook)
+
+            resp = flask.jsonify(message='Auth token успешно заменен', account=viberbot_api.get_account_info())
+            resp.status_code = 200
+            return resp
+
+        except Exception as error:
+            logging.error('replace auth token error: {}'.format(error))
+            resp = flask.jsonify(error='Auth token не удалось замененить ')
+            resp.status_code = 404
+            return resp
+
+    resp = flask.jsonify(message='некорректные входные данные {}'.format(flask.request.get_data()))
+    resp.status_code = 404
+    return resp
+
+
 viberbot.add_url_rule('/', view_func=incoming_view, methods=['POST'])
 viberbot.add_url_rule('/set_webhook', view_func=set_webhook_view, methods=['POST'])
 viberbot.add_url_rule('/verify_signature', view_func=verify_signature_view, methods=['POST'])
+viberbot.add_url_rule('/replace_auth_token', view_func=replace_auth_token_view, methods=['POST'])
