@@ -1,5 +1,5 @@
 import logging
-
+import json
 import flask
 from viberbot import Api, BotConfiguration
 from viberbot.api.messages.text_message import TextMessage
@@ -41,7 +41,18 @@ def incoming_view():
 
 
 def set_webhook_view():
-    viberbot_api.set_webhook(url=settings.VIBER_BOT_WEBHOOK)
+    data = json.loads(flask.request.get_data().decode('utf-8'))
+    webhook = data.get('webhook')
+    try:
+        if webhook is not None:
+            viberbot_api.set_webhook(url=webhook)
+        else:
+            viberbot_api.set_webhook(url=settings.VIBER_BOT_WEBHOOK)
+    except Exception as error:
+        logging.error("Error: {}".format(error))
+        return flask.Response(status=404)
+
+    return flask.jsonify(message='WebHook успешно задан', account=viberbot_api.get_account_info())
 
 
 def verify_signature_view():
