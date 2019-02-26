@@ -1,5 +1,6 @@
-import logging
 import json
+import logging
+
 import flask
 from viberbot import Api, BotConfiguration
 from viberbot.api.messages.text_message import TextMessage
@@ -19,9 +20,10 @@ viberbot_api = Api(BotConfiguration(
 
 
 def incoming_view():
-    logging.debug("received request. post data: {0}".format(flask.request.get_data()))
+    logging.info("received request. post data: {0}".format(flask.request.get_data()))
 
-    if not viberbot_api.verify_signature(flask.request.get_data(), flask.request.headers.get('X-Viber-Content-Signature')):
+    if not viberbot_api.verify_signature(flask.request.get_data(),
+                                         flask.request.headers.get('X-Viber-Content-Signature')):
         return flask.Response(status=403)
 
     viber_request = viberbot_api.parse_request(flask.request.get_data())
@@ -55,14 +57,13 @@ def set_webhook_view():
     return flask.jsonify(message='WebHook успешно задан', account=viberbot_api.get_account_info())
 
 
-
 def verify_signature_view():
     logging.info(flask.request.get_data())
     return flask.jsonify({
         'X-Viber-Content-Signature': viberbot_api._calculate_message_signature(flask.request.get_data()),
         'X-Viber-Content-Signature-Is-True': viberbot_api.verify_signature(flask.request.get_data(),
-                                                                      flask.request.headers.get(
-                                                                          'X-Viber-Content-Signature')),
+                                                                           flask.request.headers.get(
+                                                                               'X-Viber-Content-Signature')),
         'message': flask.request.get_data().decode('utf-8')})
 
 
