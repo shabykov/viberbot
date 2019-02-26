@@ -55,6 +55,7 @@ def set_webhook_view():
     return flask.jsonify(message='WebHook успешно задан', account=viberbot_api.get_account_info())
 
 
+
 def verify_signature_view():
     logging.info(flask.request.get_data())
     return flask.jsonify({
