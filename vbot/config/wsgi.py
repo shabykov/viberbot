@@ -1,8 +1,3 @@
-import os
-
-
-from apps import init_app
-
-os.environ.setdefault("APP_SETTINGS_MODULE", "config.settings.heroku")
+from vbot.apps import init_app
 
 application = init_app()

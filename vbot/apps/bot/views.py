@@ -7,7 +7,7 @@ from viberbot.api.viber_requests import (ViberFailedRequest,
                                          ViberMessageRequest,
                                          ViberSubscribedRequest)
 
-from config import settings
+from vbot.config import settings
 
 viberbot = flask.Blueprint('vbot', __name__)
 
