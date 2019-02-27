@@ -24,8 +24,12 @@ coverage.xml
 
 .idea
 venv
+venv*
 
 
 .ipynb_checkpoints
 /.ipynb_checkpoints
 /*/.ipynb_checkpoints
+
+data.*
+dump.*
